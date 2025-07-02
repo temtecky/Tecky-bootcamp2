@@ -1,0 +1,78 @@
+version: 2.1
+
+jobs:
+  test:
+    docker:
+      - image: node:18
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: npm install
+      - run:
+          name: Run tests
+          command: npm test
+      - run:
+          name: Run linting
+          command: npm run lint
+
+  build:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - setup_remote_docker:
+          version: 20.10.14
+      - run:
+          name: Build Docker image
+          command: |
+            docker build \
+              --build-arg NODE_ENV=production \
+              --build-arg APP_VERSION=${CIRCLE_SHA1} \
+              --build-arg BUILD_TIME=$(date -u +"%Y-%m-%dT%H:%M:%S.000Z") \
+              --build-arg GIT_COMMIT=${CIRCLE_SHA1} \
+              -t ${DOCKER_HUB_USERNAME}/3tier-cicd-app:${CIRCLE_SHA1} .
+            docker tag ${DOCKER_HUB_USERNAME}/3tier-cicd-app:${CIRCLE_SHA1} ${DOCKER_HUB_USERNAME}/3tier-cicd-app:latest
+      - run:
+          name: Login to Docker Hub
+          command: echo $DOCKER_HUB_PASSWORD | docker login -u $DOCKER_HUB_USERNAME --password-stdin
+      - run:
+          name: Push Docker image
+          command: |
+            docker push ${DOCKER_HUB_USERNAME}/3tier-cicd-app:${CIRCLE_SHA1}
+            docker push ${DOCKER_HUB_USERNAME}/3tier-cicd-app:latest
+
+  notify:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - run:
+          name: Deployment Complete
+          command: |
+            if [ "${CIRCLE_BRANCH}" = "main" ]; then
+              echo "✅ Docker image built and pushed successfully!"
+              echo "📦 Image: ${DOCKER_HUB_USERNAME}/3tier-cicd-app:latest"
+              echo "🚀 Ready for deployment on any platform"
+              echo "🌐 Deploy with: docker run -p 3000:3000 ${DOCKER_HUB_USERNAME}/3tier-cicd-app:latest"
+            else
+              echo "Branch ${CIRCLE_BRANCH} - tests passed, no image built"
+            fi
+
+workflows:
+  test-build-notify:
+    jobs:
+      - test
+      - build:
+          requires:
+            - test
+          filters:
+            branches:
+              only:
+                - main
+      - notify:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - main
