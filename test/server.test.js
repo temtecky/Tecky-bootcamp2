@@ -2,7 +2,6 @@ const request = require('supertest');
 const app = require('../server');
 
 describe('3-Tier CI/CD Application Tests', () => {
-  
   describe('Health Check and System Endpoints', () => {
     test('GET /health should return healthy status with database info', async () => {
       const response = await request(app).get('/health');
@@ -59,12 +58,10 @@ describe('3-Tier CI/CD Application Tests', () => {
       const newUser = {
         name: 'Test User',
         email: 'test@example.com',
-        role: 'user'
+        role: 'user',
       };
 
-      const response = await request(app)
-        .post('/api/users')
-        .send(newUser);
+      const response = await request(app).post('/api/users').send(newUser);
 
       expect(response.status).toBe(201);
       expect(response.body.success).toBe(true);
@@ -76,13 +73,11 @@ describe('3-Tier CI/CD Application Tests', () => {
 
     test('POST /api/users should return 400 for missing required fields', async () => {
       const invalidUser = {
-        name: 'Test User'
+        name: 'Test User',
         // missing email
       };
 
-      const response = await request(app)
-        .post('/api/users')
-        .send(invalidUser);
+      const response = await request(app).post('/api/users').send(invalidUser);
 
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
@@ -123,12 +118,10 @@ describe('3-Tier CI/CD Application Tests', () => {
       const newPost = {
         title: 'Test Post',
         content: 'This is a test post content',
-        userId: 1
+        userId: 1,
       };
 
-      const response = await request(app)
-        .post('/api/posts')
-        .send(newPost);
+      const response = await request(app).post('/api/posts').send(newPost);
 
       expect(response.status).toBe(201);
       expect(response.body.success).toBe(true);
@@ -140,29 +133,27 @@ describe('3-Tier CI/CD Application Tests', () => {
 
     test('POST /api/posts should return 400 for missing required fields', async () => {
       const invalidPost = {
-        title: 'Test Post'
+        title: 'Test Post',
         // missing content and userId
       };
 
-      const response = await request(app)
-        .post('/api/posts')
-        .send(invalidPost);
+      const response = await request(app).post('/api/posts').send(invalidPost);
 
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
-      expect(response.body.message).toBe('Title, content, and userId are required');
+      expect(response.body.message).toBe(
+        'Title, content, and userId are required'
+      );
     });
 
     test('POST /api/posts should return 400 for invalid userId', async () => {
       const invalidPost = {
         title: 'Test Post',
         content: 'Test content',
-        userId: 999 // non-existent user
+        userId: 999, // non-existent user
       };
 
-      const response = await request(app)
-        .post('/api/posts')
-        .send(invalidPost);
+      const response = await request(app).post('/api/posts').send(invalidPost);
 
       expect(response.status).toBe(400);
       expect(response.body.success).toBe(false);
@@ -208,12 +199,14 @@ describe('3-Tier CI/CD Application Tests', () => {
       const response = await request(app).post('/api/reset');
       expect(response.status).toBe(200);
       expect(response.body.success).toBe(true);
-      expect(response.body.message).toBe('All data cleared and counters reset to zero');
-      
+      expect(response.body.message).toBe(
+        'All data cleared and counters reset to zero'
+      );
+
       // Verify data is cleared
       const usersResponse = await request(app).get('/api/users');
       expect(usersResponse.body.data).toHaveLength(0);
-      
+
       const postsResponse = await request(app).get('/api/posts');
       expect(postsResponse.body.data).toHaveLength(0);
     });
@@ -225,12 +218,10 @@ describe('3-Tier CI/CD Application Tests', () => {
       const newUser = {
         name: 'Integration Test User',
         email: 'integration@test.com',
-        role: 'admin'
+        role: 'admin',
       };
 
-      const userResponse = await request(app)
-        .post('/api/users')
-        .send(newUser);
+      const userResponse = await request(app).post('/api/users').send(newUser);
 
       expect(userResponse.status).toBe(201);
       const createdUserId = userResponse.body.data.id;
@@ -239,12 +230,10 @@ describe('3-Tier CI/CD Application Tests', () => {
       const newPost = {
         title: 'Integration Test Post',
         content: 'This post was created during integration testing',
-        userId: createdUserId
+        userId: createdUserId,
       };
 
-      const postResponse = await request(app)
-        .post('/api/posts')
-        .send(newPost);
+      const postResponse = await request(app).post('/api/posts').send(newPost);
 
       expect(postResponse.status).toBe(201);
       expect(postResponse.body.data.author).toBe(newUser.name);

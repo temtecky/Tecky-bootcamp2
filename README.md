@@ -1,4 +1,5 @@
 # Project 2: CI/CD Pipeline Implementation Challenge
+
 ## Nebulance Systems DevOps BootCamp
 
 ## Assignment Overview
@@ -10,7 +11,9 @@ You are provided with a complete 3-tier Node.js web application that requires CI
 ## Application Overview
 
 ### What You're Working With
+
 A fully functional 3-tier web application with:
+
 - **Interactive Web Dashboard**: User and post management interface
 - **RESTful API**: Complete backend with 11 endpoints
 - **Real-time Features**: Live statistics and data visualization
@@ -18,6 +21,7 @@ A fully functional 3-tier web application with:
 - **Health Monitoring**: System status and version tracking
 
 ### Technical Stack
+
 - **Frontend**: HTML5/CSS3/JavaScript (responsive design)
 - **Backend**: Node.js 18+ with Express.js framework
 - **Storage**: In-memory data store (no database setup required)
@@ -28,13 +32,16 @@ A fully functional 3-tier web application with:
 ## Your Mission
 
 ### Primary Objective
+
 Implement a complete CI/CD pipeline using CircleCI that:
+
 1. **Automatically tests** the application on every code push
 2. **Builds Docker images** and pushes to Docker Hub
 3. **Makes the application accessible** via the internet
 4. **Demonstrates DevOps best practices** with proper documentation
 
 ### Success Metrics
+
 - ✅ **Pipeline Automation**: CircleCI triggers on GitHub commits
 - ✅ **Quality Gates**: All 18 tests pass with 88%+ coverage
 - ✅ **Container Deployment**: Docker images build and deploy successfully
@@ -44,12 +51,14 @@ Implement a complete CI/CD pipeline using CircleCI that:
 ## Technical Requirements
 
 ### Tools You Must Use
+
 - **GitHub**: Source code repository and version control
 - **CircleCI**: CI/CD pipeline automation (free tier available)
 - **Docker Hub**: Container image registry (free tier available)
 - **Cloud Platform**: Deploy to AWS, Google Cloud, Azure, or similar
 
 ### Pipeline Expectations
+
 1. **Continuous Integration**
    - Automated testing on every commit
    - Code quality validation (linting)
@@ -68,6 +77,7 @@ Implement a complete CI/CD pipeline using CircleCI that:
 ## Deliverables
 
 ### What You Must Submit
+
 1. **GitHub Repository URL** with your implemented CI/CD pipeline
 2. **Live Application URL** where the app is accessible on the internet
 3. **CircleCI Dashboard** showing successful pipeline runs
@@ -75,7 +85,9 @@ Implement a complete CI/CD pipeline using CircleCI that:
 5. **Documentation** explaining your implementation approach
 
 ### Demonstration Requirements
+
 Your submission must prove:
+
 - **Automated Pipeline**: Show CircleCI building and deploying on code changes
 - **Live Application**: Provide working URL to access the web interface
 - **Container Registry**: Docker Hub repository with tagged images
@@ -85,17 +97,20 @@ Your submission must prove:
 ## Evaluation Criteria
 
 ### Technical Implementation (70%)
+
 - **CI/CD Pipeline**: Automated testing and deployment (30%)
 - **Container Deployment**: Docker images and cloud deployment (25%)
 - **Application Access**: Live, functional web application (15%)
 
 ### DevOps Practices (30%)
+
 - **Documentation**: Clear setup and deployment instructions (15%)
 - **Best Practices**: Proper CI/CD methodology and security (15%)
 
 ## Success Indicators
 
 **You've succeeded when someone can:**
+
 - Visit your live application URL and use all features
 - View your CircleCI pipeline and see successful builds
 - Access your Docker Hub repository and pull your images
@@ -105,7 +120,9 @@ Your submission must prove:
 ## Getting Started
 
 ### Explore the Application First
+
 1. **Run Locally**: Get the application working on your machine
+
    ```bash
    npm install
    npm start
@@ -125,6 +142,7 @@ Your submission must prove:
    - Study the existing `Dockerfile`
 
 ### Your Implementation Strategy
+
 1. **Set up accounts** for GitHub, CircleCI, and Docker Hub
 2. **Create your repository** and connect to CircleCI
 3. **Configure the pipeline** for testing and building
@@ -144,12 +162,8 @@ Your submission must prove:
 **Success = Live Application + Automated Pipeline + Clear Documentation**
 
 Your goal is to make this application accessible on the internet through a fully automated CI/CD pipeline. When complete, you should see the congratulations message for successfully implementing Project 2 of the Nebulance Systems DevOps BootCamp.
+
 # nksusn-bootcamp-project-2
-
-
-
-
-
 
 PERSONAL NOTES
 
@@ -173,16 +187,16 @@ This is a fully functional Node.js 3-tier web application with a complete CI/CD 
 
 ## 🛠️ Tech Stack
 
-| Layer        | Tech                     |
-|--------------|--------------------------|
-| Frontend     | HTML5/CSS3/JS (static)   |
-| Backend      | Node.js + Express        |
-| Data Layer   | In-memory store (JS obj) |
-| Testing      | Jest + Supertest         |
-| Linting      | ESLint + Prettier        |
-| Container    | Docker                   |
-| CI/CD        | CircleCI                 |
-| Deployment   | Render (via GitHub)      |
+| Layer      | Tech                     |
+| ---------- | ------------------------ |
+| Frontend   | HTML5/CSS3/JS (static)   |
+| Backend    | Node.js + Express        |
+| Data Layer | In-memory store (JS obj) |
+| Testing    | Jest + Supertest         |
+| Linting    | ESLint + Prettier        |
+| Container  | Docker                   |
+| CI/CD      | CircleCI                 |
+| Deployment | Render (via GitHub)      |
 
 ---
 
@@ -200,10 +214,10 @@ This is a fully functional Node.js 3-tier web application with a complete CI/CD 
 
 **Environment Variables on CircleCI:**
 
-| Key               | Value                |
-|------------------|----------------------|
-| `DOCKERHUB_USERNAME` | `nksusn`            |
-| `DOCKERHUB_PASSWORD` | *(your password/token)* |
+| Key                  | Value                   |
+| -------------------- | ----------------------- |
+| `DOCKERHUB_USERNAME` | `nksusn`                |
+| `DOCKERHUB_PASSWORD` | _(your password/token)_ |
 
 ---
 
@@ -213,6 +227,8 @@ This is a fully functional Node.js 3-tier web application with a complete CI/CD 
 - Latest Image Tag: `latest`
 
 To pull manually:
+
 ```bash
 docker pull nksusn/cicd-demo-app:latest
 
+```

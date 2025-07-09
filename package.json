@@ -9,7 +9,6 @@
     "test": "jest --coverage --detectOpenHandles",
     "test:watch": "jest --watch --detectOpenHandles",
     "test:integration": "jest --testPathPattern=integration --detectOpenHandles",
-
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",

@@ -9,14 +9,24 @@ const PORT = process.env.PORT || 3000;
 const database = {
   users: [
     { id: 1, name: 'John Doe', email: 'john@example.com', role: 'admin' },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'user' }
+    { id: 2, name: 'Jane Smith', email: 'jane@example.com', role: 'user' },
   ],
   posts: [
-    { id: 1, title: 'Welcome to Our App', content: 'This is a 3-tier application demo', userId: 1 },
-    { id: 2, title: 'CI/CD Best Practices', content: 'Learn about continuous integration', userId: 2 }
+    {
+      id: 1,
+      title: 'Welcome to Our App',
+      content: 'This is a 3-tier application demo',
+      userId: 1,
+    },
+    {
+      id: 2,
+      title: 'CI/CD Best Practices',
+      content: 'Learn about continuous integration',
+      userId: 2,
+    },
   ],
   nextUserId: 3,
-  nextPostId: 3
+  nextPostId: 3,
 };
 
 const startTime = Date.now();
@@ -45,8 +55,8 @@ app.get('/health', (req, res) => {
     environment: process.env.NODE_ENV || 'development',
     database: {
       users: database.users.length,
-      posts: database.posts.length
-    }
+      posts: database.posts.length,
+    },
   });
 });
 
@@ -56,7 +66,7 @@ app.get('/version', (req, res) => {
     version: process.env.APP_VERSION || '1.0.0',
     buildTime: process.env.BUILD_TIME || new Date().toISOString(),
     gitCommit: process.env.GIT_COMMIT || 'unknown',
-    environment: process.env.NODE_ENV || 'development'
+    environment: process.env.NODE_ENV || 'development',
   });
 });
 
@@ -65,125 +75,125 @@ app.get('/api/users', (req, res) => {
   res.json({
     success: true,
     data: database.users,
-    count: database.users.length
+    count: database.users.length,
   });
 });
 
 app.get('/api/users/:id', (req, res) => {
   const userId = parseInt(req.params.id);
-  const user = database.users.find(u => u.id === userId);
-  
+  const user = database.users.find((u) => u.id === userId);
+
   if (!user) {
     return res.status(404).json({
       success: false,
-      message: 'User not found'
+      message: 'User not found',
     });
   }
-  
+
   res.json({
     success: true,
-    data: user
+    data: user,
   });
 });
 
 app.post('/api/users', (req, res) => {
   const { name, email, role = 'user' } = req.body;
-  
+
   if (!name || !email) {
     return res.status(400).json({
       success: false,
-      message: 'Name and email are required'
+      message: 'Name and email are required',
     });
   }
-  
+
   const newUser = {
     id: database.nextUserId++,
     name,
     email,
-    role
+    role,
   };
-  
+
   database.users.push(newUser);
-  
+
   res.status(201).json({
     success: true,
-    data: newUser
+    data: newUser,
   });
 });
 
 // API Routes for Posts (Content Management)
 app.get('/api/posts', (req, res) => {
-  const postsWithUsers = database.posts.map(post => {
-    const user = database.users.find(u => u.id === post.userId);
+  const postsWithUsers = database.posts.map((post) => {
+    const user = database.users.find((u) => u.id === post.userId);
     return {
       ...post,
-      author: user ? user.name : 'Unknown'
+      author: user ? user.name : 'Unknown',
     };
   });
-  
+
   res.json({
     success: true,
     data: postsWithUsers,
-    count: postsWithUsers.length
+    count: postsWithUsers.length,
   });
 });
 
 app.get('/api/posts/:id', (req, res) => {
   const postId = parseInt(req.params.id);
-  const post = database.posts.find(p => p.id === postId);
-  
+  const post = database.posts.find((p) => p.id === postId);
+
   if (!post) {
     return res.status(404).json({
       success: false,
-      message: 'Post not found'
+      message: 'Post not found',
     });
   }
-  
-  const user = database.users.find(u => u.id === post.userId);
+
+  const user = database.users.find((u) => u.id === post.userId);
   const postWithAuthor = {
     ...post,
-    author: user ? user.name : 'Unknown'
+    author: user ? user.name : 'Unknown',
   };
-  
+
   res.json({
     success: true,
-    data: postWithAuthor
+    data: postWithAuthor,
   });
 });
 
 app.post('/api/posts', (req, res) => {
   const { title, content, userId } = req.body;
-  
+
   if (!title || !content || !userId) {
     return res.status(400).json({
       success: false,
-      message: 'Title, content, and userId are required'
+      message: 'Title, content, and userId are required',
     });
   }
-  
-  const user = database.users.find(u => u.id === parseInt(userId));
+
+  const user = database.users.find((u) => u.id === parseInt(userId));
   if (!user) {
     return res.status(400).json({
       success: false,
-      message: 'Invalid userId'
+      message: 'Invalid userId',
     });
   }
-  
+
   const newPost = {
     id: database.nextPostId++,
     title,
     content,
-    userId: parseInt(userId)
+    userId: parseInt(userId),
   };
-  
+
   database.posts.push(newPost);
-  
+
   res.status(201).json({
     success: true,
     data: {
       ...newPost,
-      author: user.name
-    }
+      author: user.name,
+    },
   });
 });
 
@@ -194,15 +204,15 @@ app.get('/api/dashboard', (req, res) => {
     data: {
       totalUsers: database.users.length,
       totalPosts: database.posts.length,
-      recentPosts: database.posts.slice(-3).map(post => {
-        const user = database.users.find(u => u.id === post.userId);
+      recentPosts: database.posts.slice(-3).map((post) => {
+        const user = database.users.find((u) => u.id === post.userId);
         return {
           ...post,
-          author: user ? user.name : 'Unknown'
+          author: user ? user.name : 'Unknown',
         };
       }),
-      recentUsers: database.users.slice(-3)
-    }
+      recentUsers: database.users.slice(-3),
+    },
   });
 });
 
@@ -212,10 +222,10 @@ app.post('/api/reset', (req, res) => {
   database.posts = [];
   database.nextUserId = 1;
   database.nextPostId = 1;
-  
+
   res.json({
     success: true,
-    message: 'All data cleared and counters reset to zero'
+    message: 'All data cleared and counters reset to zero',
   });
 });
 
@@ -224,7 +234,7 @@ app.use('*', (req, res) => {
   res.status(404).json({
     error: 'Route not found',
     path: req.originalUrl,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
@@ -233,8 +243,11 @@ app.use((err, req, res, _next) => {
   console.error('Error:', err.message);
   res.status(500).json({
     error: 'Internal server error',
-    message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong',
-    timestamp: new Date().toISOString()
+    message:
+      process.env.NODE_ENV === 'development'
+        ? err.message
+        : 'Something went wrong',
+    timestamp: new Date().toISOString(),
   });
 });
 
