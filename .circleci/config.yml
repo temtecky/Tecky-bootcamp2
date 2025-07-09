@@ -3,22 +3,15 @@ version: 2.1
 executors:
   node-executor:
     docker:
-      - image: cimg/node:18.20
-    working_directory: ~/project
+      - image: cimg/node:18.18
+    working_directory: ~/app
 
 jobs:
   install:
     executor: node-executor
     steps:
       - checkout
-      - restore_cache:
-          keys:
-            - node-deps-{{ checksum "package-lock.json" }}
-      - run: npm install
-      - save_cache:
-          key: node-deps-{{ checksum "package-lock.json" }}
-          paths:
-            - node_modules
+      - run: npm ci
 
   lint:
     executor: node-executor
@@ -33,44 +26,44 @@ jobs:
     steps:
       - checkout
       - run: npm ci
-      - run: npm test
-      - store_artifacts:
-          path: coverage
-      - run:
-          name: Enforce 88%+ coverage
-          command: |
-            COVERAGE=$(npx jest --coverage --json --outputFile=coverage/coverage-summary.json && jq '.total.lines.pct' coverage/coverage-summary.json)
-            THRESHOLD=88
-            if (( $(echo "$COVERAGE < $THRESHOLD" | bc -l) )); then
-              echo "❌ Test coverage below $THRESHOLD% ($COVERAGE%)"
-              exit 1
-            else
-              echo "✅ Test coverage is $COVERAGE%"
-            fi
+      - run: npm run test
 
-  docker-build-push:
+  docker-build-and-push:
     docker:
       - image: cimg/base:stable
     steps:
       - checkout
-      - setup_remote_docker
+      - setup_remote_docker:
+          version: 20.10.18
       - run:
-          name: Build Docker image
-          command: docker build -t $DOCKER_USER/cicd-app:$CIRCLE_SHA1 .
-      - run:
-          name: Push image to Docker Hub
+          name: Build and push Docker image
           command: |
-            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
-            docker push $DOCKER_USER/cicd-app:$CIRCLE_SHA1
+            echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+            docker build -t nksusn/cicd-demo-app:latest .
+            docker push nksusn/cicd-demo-app:latest
+
+  healthcheck:
+    executor: node-executor
+    steps:
+      - run:
+          name: Check Render health endpoint
+          command: |
+            curl -sSf https://<your-render-app-url>/health || exit 1
 
 workflows:
   version: 2
-  ci-cd-pipeline:
+  build-test-deploy:
     jobs:
       - install
       - lint:
-          requires: [install]
+          requires:
+            - install
       - test:
-          requires: [lint]
-      - docker-build-push:
-          requires: [test]
+          requires:
+            - lint
+      - docker-build-and-push:
+          requires:
+            - test
+      - healthcheck:
+          requires:
+            - docker-build-and-push

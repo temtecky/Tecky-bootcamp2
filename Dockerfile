@@ -1,24 +1,20 @@
-# Use an official Node.js runtime as base image
-FROM node:18-slim
+# Use official Node.js image
+FROM node:18-alpine
 
-# Set working directory inside the container
+# Set working directory
 WORKDIR /app
 
-# Copy only package files first for better caching
+# Copy package files
 COPY package*.json ./
 
 # Install dependencies
 RUN npm install --production
 
-# Copy remaining application files
+# Copy the rest of the app
 COPY . .
 
-# Set environment variables (optional defaults)
-ENV PORT=3000
-ENV NODE_ENV=production
-
-# Expose the port
+# Expose the app port
 EXPOSE 3000
 
-# Run the application
-CMD ["node", "server.js"]
+# Start the app
+CMD ["npm", "start"]
