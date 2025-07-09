@@ -145,3 +145,74 @@ Your submission must prove:
 
 Your goal is to make this application accessible on the internet through a fully automated CI/CD pipeline. When complete, you should see the congratulations message for successfully implementing Project 2 of the Nebulance Systems DevOps BootCamp.
 # nksusn-bootcamp-project-2
+
+
+
+
+
+
+PERSONAL NOTES
+
+# # 🚀 3-Tier CI/CD Demo Application
+
+This is a fully functional Node.js 3-tier web application with a complete CI/CD pipeline using **CircleCI**, **Docker Hub**, and **Render**.
+
+---
+
+## 📦 Project Overview
+
+**Features:**
+
+- 🧑‍💼 User & Post Management (API + Web Interface)
+- 📊 Real-time Dashboard
+- 🔁 Reset Functionality
+- 🩺 Health Monitoring
+- ✅ 18 Automated Tests with 88%+ coverage
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer        | Tech                     |
+|--------------|--------------------------|
+| Frontend     | HTML5/CSS3/JS (static)   |
+| Backend      | Node.js + Express        |
+| Data Layer   | In-memory store (JS obj) |
+| Testing      | Jest + Supertest         |
+| Linting      | ESLint + Prettier        |
+| Container    | Docker                   |
+| CI/CD        | CircleCI                 |
+| Deployment   | Render (via GitHub)      |
+
+---
+
+## ⚙️ CI/CD Pipeline (CircleCI)
+
+**Pipeline Steps:**
+
+1. ✅ Install dependencies (`npm ci`)
+2. ✅ Run linter (`eslint .`)
+3. ✅ Run Prettier format check
+4. ✅ Run all tests with coverage (`npm test`)
+5. ✅ Build Docker image
+6. ✅ Push to Docker Hub (`nksusn/cicd-demo-app`)
+7. ✅ Verify Render deployment via `/health` endpoint
+
+**Environment Variables on CircleCI:**
+
+| Key               | Value                |
+|------------------|----------------------|
+| `DOCKERHUB_USERNAME` | `nksusn`            |
+| `DOCKERHUB_PASSWORD` | *(your password/token)* |
+
+---
+
+## 🐳 Docker Image
+
+- Docker Hub Repo: [nksusn/cicd-demo-app](https://hub.docker.com/r/nksusn/cicd-demo-app)
+- Latest Image Tag: `latest`
+
+To pull manually:
+```bash
+docker pull nksusn/cicd-demo-app:latest
+
