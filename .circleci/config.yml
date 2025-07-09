@@ -1,0 +1,76 @@
+version: 2.1
+
+executors:
+  node-executor:
+    docker:
+      - image: cimg/node:18.20
+    working_directory: ~/project
+
+jobs:
+  install:
+    executor: node-executor
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - node-deps-{{ checksum "package-lock.json" }}
+      - run: npm install
+      - save_cache:
+          key: node-deps-{{ checksum "package-lock.json" }}
+          paths:
+            - node_modules
+
+  lint:
+    executor: node-executor
+    steps:
+      - checkout
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run format:check
+
+  test:
+    executor: node-executor
+    steps:
+      - checkout
+      - run: npm ci
+      - run: npm test
+      - store_artifacts:
+          path: coverage
+      - run:
+          name: Enforce 88%+ coverage
+          command: |
+            COVERAGE=$(npx jest --coverage --json --outputFile=coverage/coverage-summary.json && jq '.total.lines.pct' coverage/coverage-summary.json)
+            THRESHOLD=88
+            if (( $(echo "$COVERAGE < $THRESHOLD" | bc -l) )); then
+              echo "❌ Test coverage below $THRESHOLD% ($COVERAGE%)"
+              exit 1
+            else
+              echo "✅ Test coverage is $COVERAGE%"
+            fi
+
+  docker-build-push:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build Docker image
+          command: docker build -t $DOCKER_USER/cicd-app:$CIRCLE_SHA1 .
+      - run:
+          name: Push image to Docker Hub
+          command: |
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USER" --password-stdin
+            docker push $DOCKER_USER/cicd-app:$CIRCLE_SHA1
+
+workflows:
+  version: 2
+  ci-cd-pipeline:
+    jobs:
+      - install
+      - lint:
+          requires: [install]
+      - test:
+          requires: [lint]
+      - docker-build-push:
+          requires: [test]
