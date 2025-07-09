@@ -42,12 +42,18 @@ jobs:
             docker push nksusn/cicd-demo-app:latest
 
   healthcheck:
-    executor: node-executor
+    docker:
+      - image: cimg/base:stable
     steps:
       - run:
-          name: Check Render health endpoint
+          name: Check deployment health
           command: |
-            curl -sSf https://<your-render-app-url>/health || exit 1
+            if [ -n "$DEPLOY_URL" ]; then
+              curl -sSf "$DEPLOY_URL/health" || exit 1
+              echo "Health check passed for $DEPLOY_URL"
+            else
+              echo "DEPLOY_URL not set, skipping health check"
+            fi
 
 workflows:
   version: 2
