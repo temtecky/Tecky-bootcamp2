@@ -81,9 +81,9 @@ app.get('/metrics', (req, res) => {
     requests: {
       total: database.users.length + database.posts.length,
       users: database.users.length,
-      posts: database.posts.length
+      posts: database.posts.length,
     },
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   });
 });
 
