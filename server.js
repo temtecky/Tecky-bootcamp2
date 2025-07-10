@@ -70,6 +70,23 @@ app.get('/version', (req, res) => {
   });
 });
 
+// Metrics endpoint for monitoring
+app.get('/metrics', (req, res) => {
+  const uptime = Date.now() - startTime;
+  res.json({
+    uptime: formatUptime(uptime),
+    uptimeMs: uptime,
+    memory: process.memoryUsage(),
+    cpu: process.cpuUsage(),
+    requests: {
+      total: database.users.length + database.posts.length,
+      users: database.users.length,
+      posts: database.posts.length
+    },
+    timestamp: new Date().toISOString()
+  });
+});
+
 // API Routes for Users (Data Management)
 app.get('/api/users', (req, res) => {
   res.json({
